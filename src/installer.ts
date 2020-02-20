@@ -40,6 +40,7 @@ export async function getProtoc(
   includePreReleases: boolean,
   repoToken: string
 ) {
+  console.log(`version is ${version}`)
   if (!version.startsWith("v")) {
     version = "v" + version
   }
