@@ -171,6 +171,9 @@ async function determineVersion(
     if (versionPart[1] == null || versionPart[2] == null) {
       return await computeVersion(version, includePreReleases, repoToken);
     } else {
+      if (!version.startsWith("v")) {
+        version = "v" + version
+      }
       core.debug(`using fixed version ${version}`);
 
       return version;
