@@ -41,7 +41,7 @@ export async function getProtoc(
   repoToken: string
 ) {
   // resolve the version number
-  const targetVersion = await computeVersion(
+  const targetVersion = await determineVersion(
     version,
     includePreReleases,
     repoToken
@@ -158,6 +158,26 @@ async function fetchVersions(
     .filter(tag => tag.tag_name.match(/v\d+\.[\w\.]+/g))
     .filter(tag => includePrerelease(tag.prerelease, includePreReleases))
     .map(tag => tag.tag_name.replace("v", ""));
+}
+
+async function determineVersion(
+  version: string,
+  includePreReleases: boolean,
+  repoToken: string
+): Promise<string> {
+  if (!version.endsWith(".x")) {
+    const versionPart = version.split(".");
+
+    if (versionPart[1] == null || versionPart[2] == null) {
+      return await computeVersion(version, includePreReleases, repoToken);
+    } else {
+      core.debug(`using fixed version ${version}`);
+
+      return version;
+    }
+  }
+
+  return await computeVersion(version, includePreReleases, repoToken);
 }
 
 // Compute an actual version starting from the `version` configuration param.
